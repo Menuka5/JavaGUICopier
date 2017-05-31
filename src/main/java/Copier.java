@@ -1,13 +1,11 @@
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-
-import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
+import java.nio.file.StandardCopyOption;
 
 
 /**
@@ -15,6 +13,8 @@ import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
  */
 public class Copier {
 
+    private Path pathOfSource = null;
+    private Path pathOfDestination = null;
     private JCheckBox moveCheckBox;
     private JButton pauseButton;
     private JButton stopButton;
@@ -22,53 +22,69 @@ public class Copier {
     private JPanel mainPanel;
     private JTextField toField;
     private JTextField fromField;
-
-
+    private JButton sourceButton;
+    private JButton destinationButton;
+    private JFileChooser selectFile;
+    private String sourceLocation;
+    private String destinationLocation;
     public Copier() {
+
         startButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
 
                 String fromFieldContent = fromField.getText();
                 String toFieldContent = toField.getText();
-                File varTmpDir = new File(fromFieldContent);
-                File destination = new File(toFieldContent);
 
                 if (fromFieldContent.equals("") || toFieldContent.equals("")) {
+
                     String messageForNull = (fromFieldContent.equals("") && toFieldContent.equals("") ? "Both paths are empty" : (fromFieldContent.equals("") ? "From path is Empty" : "To path empty"));
                     JOptionPane.showMessageDialog(null, messageForNull);
-                } else {
 
+                } else {
+                    pathOfSource = Paths.get(sourceLocation);
+                    pathOfDestination = Paths.get(destinationLocation);
                     if (moveCheckBox.isSelected()) {
 
-
-                        if (varTmpDir.exists() && destination.isDirectory()) {
-                            if (varTmpDir.renameTo(new File(destination.toURI().toString() + varTmpDir.getName()))) {
-                                JOptionPane.showMessageDialog(null, "File moved successful");
-                            }
-//                            JOptionPane.showMessageDialog(null, destination.toURI().toString() + varTmpDir.getName());
-                        } else {
-                            JOptionPane.showMessageDialog(null, "File Move failed");
+                        try {
+                            Files.move(pathOfSource, pathOfDestination, StandardCopyOption.REPLACE_EXISTING);
+                            JOptionPane.showMessageDialog(null, "File move Successful!!!");
+                        } catch (IOException e1) {
+                            JOptionPane.showMessageDialog(null, "File move failed!!!");
                         }
-//                        JOptionPane.showMessageDialog(null, "File moved ??");
                     } else {
-
-                        if (varTmpDir.exists() && destination.isDirectory()) {
-                            Path source = Paths.get(varTmpDir.toURI().getPath());
-                            Path nwdir = Paths.get(destination.toURI().getPath());
-                            try {
-                                Files.copy(source, nwdir.resolve(source.getFileName()), REPLACE_EXISTING);
-                                System.out.println("File Copied");
-                            } catch (IOException ex) {
-                                JOptionPane.showMessageDialog(null, (!varTmpDir.exists() && !destination.isDirectory() ? "Both destinations do not exist" : (!varTmpDir.exists() ? "Source file does not exists" : "File copy destination is not a Folder")));
-                            }
-                        } else {
-                            JOptionPane.showMessageDialog(null, (!varTmpDir.exists() && !destination.isDirectory() ? "Both destinations do not exist" : (!varTmpDir.exists() ? "Source file does not exists" : "File copy destination is not a Folder")));
+                        try {
+                            Files.copy(pathOfSource, pathOfDestination, StandardCopyOption.REPLACE_EXISTING);
+                            JOptionPane.showMessageDialog(null, "File copy successful!!!");
+                        } catch (IOException e1) {
+                            JOptionPane.showMessageDialog(null, "File copy failed!!!");
                         }
                     }
-
-
                 }
 
+            }
+        });
+
+        sourceButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                selectFile = new JFileChooser();
+                selectFile.setDialogTitle("Select a file");
+                selectFile.showDialog(null, "Ok");
+                sourceLocation = selectFile.getSelectedFile().getAbsolutePath();
+                fromField.setText(sourceLocation);
+            }
+        });
+
+        destinationButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                selectFile = new JFileChooser();
+                selectFile.setDialogTitle("Copy to");
+                selectFile.showDialog(null, "Ok");
+                selectFile.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
+                selectFile.setAcceptAllFileFilterUsed(false);
+                destinationLocation = selectFile.getSelectedFile().getAbsolutePath();
+                toField.setText(destinationLocation);
 
             }
         });
