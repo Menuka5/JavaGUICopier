@@ -4,7 +4,7 @@
 
     <groupId>groupId</groupId>
     <artifactId>Copier</artifactId>
-    <version>1.1.0</version>
+    <version>2</version>
 
     <dependencies>
         <dependency>
@@ -17,9 +17,10 @@
         <project.scm.id>githubauthentication</project.scm.id>
     </properties>
     <scm>
-        <developerConnection>scm:git:git://github.com/Menuka5/JavaGUICopier</developerConnection>
-        <tag>v1.1.0</tag>
-    </scm>
+        <developerConnection>scm:git:https://github.com/Menuka5/JavaGUICopier.git</developerConnection>
+
+      <tag>s</tag>
+  </scm>
     <build>
         <pluginManagement>
             <plugins>
@@ -28,7 +29,7 @@
                     <artifactId>maven-release-plugin</artifactId>
                     <version>2.5.3</version>
                     <configuration>
-                        <tagNameFormat>v@{project.version}</tagNameFormat>
+                        <!--<tagNameFormat>v@{project.version}</tagNameFormat>-->
                         <checkModificationExcludes>
                             <checkModificationExclude>pom.xml</checkModificationExclude>
                         </checkModificationExcludes>
