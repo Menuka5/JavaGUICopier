@@ -21,7 +21,6 @@
 
     <scm>
         <developerConnection>scm:git:https://github.com/Menuka5/JavaGUICopier.git</developerConnection>
-
       <tag>HEAD</tag>
   </scm>
     <build>
@@ -32,7 +31,6 @@
                     <artifactId>maven-release-plugin</artifactId>
                     <version>2.5.3</version>
                     <configuration>
-                        <!--<tagNameFormat>v@{project.version}</tagNameFormat>-->
                         <checkModificationExcludes>
                             <checkModificationExclude>pom.xml</checkModificationExclude>
                         </checkModificationExcludes>

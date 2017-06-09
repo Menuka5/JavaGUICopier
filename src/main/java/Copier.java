@@ -1,5 +1,8 @@
+import storeobjects.FileCopyThread;
+import storeobjects.ThreadObjectStore;
+
 import javax.swing.*;
-import java.io.*;
+import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -7,6 +10,7 @@ import java.nio.file.StandardCopyOption;
 
 public class Copier {
 
+    ThreadObjectStore threadObjectStore;
     private Path pathOfSource = null;
     private Path pathOfDestination = null;
     private JCheckBox moveCheckBox;
@@ -50,7 +54,12 @@ public class Copier {
                     }
                 } else {
 
-                    File src = new File(sourceLocation);
+                    FileCopyThread fileCopyThread = new FileCopyThread(sourceLocation, destinationLocation, fileCopyProgressBar);
+//                    System.out.println("test->"+sourceLocation+destinationLocation);
+                    threadObjectStore.setStoreThread(fileCopyThread);
+                    threadObjectStore.getStoreThread().start();
+
+                    /*File src = new File(sourceLocation);
                     File dst = new File(destinationLocation);
 
                     try (
@@ -74,7 +83,7 @@ public class Copier {
 
                     } catch (IOException ex) {
                         System.out.println(ex.getMessage());
-                    }
+                    }*/
                 }
             }
         });
