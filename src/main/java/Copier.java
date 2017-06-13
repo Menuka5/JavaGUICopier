@@ -10,7 +10,7 @@ import java.nio.file.StandardCopyOption;
 
 public class Copier {
 
-    ThreadObjectStore threadObjectStore;
+    ThreadObjectStore threadObjectStore = new ThreadObjectStore();
     private Path pathOfSource = null;
     private Path pathOfDestination = null;
     private JCheckBox moveCheckBox;
@@ -54,36 +54,15 @@ public class Copier {
                     }
                 } else {
 
-                    FileCopyThread fileCopyThread = new FileCopyThread(sourceLocation, destinationLocation, fileCopyProgressBar);
-//                    System.out.println("test->"+sourceLocation+destinationLocation);
-                    threadObjectStore.setStoreThread(fileCopyThread);
-                    threadObjectStore.getStoreThread().start();
+                    if (threadObjectStore.getStoreThread() == null) {
+                        FileCopyThread fileCopyThread = new FileCopyThread(sourceLocation, destinationLocation, fileCopyProgressBar);
+                        threadObjectStore.setStoreThread(fileCopyThread);
+                        threadObjectStore.getStoreThread().start();
+                    } else {
+                        threadObjectStore.getStoreThread().notify();
+                    }
 
-                    /*File src = new File(sourceLocation);
-                    File dst = new File(destinationLocation);
 
-                    try (
-                            InputStream in = new FileInputStream(src);
-                            OutputStream out = new FileOutputStream(dst);) {
-
-                        dst.createNewFile();
-                        long expectedBytes = src.length();
-                        long totalBytesCopied = 0;
-                        byte[] buf = new byte[256];
-                        int len = 0;
-                        fileCopyProgressBar.setVisible(true);
-
-                        while ((len = in.read(buf)) > 0) {
-
-                            out.write(buf, 0, len);
-                            totalBytesCopied += len;
-                            showProgress(totalBytesCopied, expectedBytes);
-
-                        }
-
-                    } catch (IOException ex) {
-                        System.out.println(ex.getMessage());
-                    }*/
                 }
             }
         });
@@ -105,6 +84,30 @@ public class Copier {
             destinationLocation = selectFile.getSelectedFile().getAbsolutePath();
             toField.setText(destinationLocation);
 
+        });
+
+        stopButton.addActionListener(e -> {
+            if (threadObjectStore.getStoreThread() == null) {
+                JOptionPane.showMessageDialog(null, "There is no file copy process -> Stop failed.");
+            } else {
+                try {
+                    threadObjectStore.getStoreThread().interrupt();
+                } catch (Exception e1) {
+                    e1.printStackTrace();
+                }
+            }
+        });
+
+        pauseButton.addActionListener(e -> {
+            if (threadObjectStore.getStoreThread() == null) {
+                JOptionPane.showMessageDialog(null, "There is no file copy process -> Pause failed.");
+            } else {
+                try {
+                    threadObjectStore.getStoreThread().wait();
+                } catch (InterruptedException e1) {
+                    e1.printStackTrace();
+                }
+            }
         });
     }
 

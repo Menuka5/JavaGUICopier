@@ -14,6 +14,7 @@ public class FileCopyThread extends Thread {
         this.fileCopyProgressBar = fileCopyProgressBar;
     }
 
+
     @Override
     public void run() {
 
